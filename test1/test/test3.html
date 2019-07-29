@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Vue-$watch</title>
+  <style type="text/css" media="screen">
+    [v-cloak] {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+<div id="container" v-cloak>
+  <h3>{{user.name}}</h3>
+  <h3>{{dog}}</h3>
+  <button type="button" @click="alert1">弹出警告框</button>
+  <button @click="changeGenerData">改变名字</button>
+  <button type="button" @click="changeUserData">改变User</button>
+  <input type="text" name="da" v-model="user.age">
+</div>
+<script type="text/javascript" src="vue.js"></script>
+<script type="text/javascript">
+  var app = new Vue({
+    el: "#container",
+    data: {
+      user: {
+        name: '张三',
+        age: 34,
+      },
+      dog: "金毛"
+    },
+    methods: {
+      alert1: function () {
+        alert(1)
+      },
+      changeGenerData: function () {
+        this.dog = "哈士奇"
+      },
+      changeUserData: function () {
+        this.user={
+          name: '张三',
+          age: 50,
+        }
+      }
+    },
+    watch: {
+      //用法一，监视普通的数据
+      //方式二，使用Vue实例中的watch选项：
+      dog: function (newValue, oldValue) {
+        alert("dog数据发生了变化！");
+        console.log(newValue);
+        console.log(oldValue)
+      },
+      //用法二，监视对象数据
+      //方式二，使用Vue实例中的watch选项：
+      user: {
+        //要做的事情handler选项
+        handler: function (newValue, oldValue) {
+          console.log("数据对象user被改变了!")
+        },
+        // 是否深度监视
+        deep: true
+      }
+    }
+  })
+  // vm.$watch(data,callback,[options]),
+  // 用法一，监视普通的数据
+  //方式一，使用Vue实例的$watch()方法：
+  app.$watch("dog", function (newValue, oldValue) {
+    alert("dog数据发生了变化！");
+    console.log(newValue);
+    console.log(oldValue)
+  })
+  //用法二，监视对象数据
+  //方式一，使用Vue实例的$watch()方法
+  app.$watch("user", function (newValue, oldValue) {
+    console.log("数据对象user被改变了")
+    console.log("newValue:"+newValue.age)//45
+    console.log("oldValue:"+oldValue.age)//45
+    //数据对象user确实发生了改变，而在监视一般数据的时候newValue,oldValue分别代表的是改变后（前）的值
+    //那么为什么这里得到的都是改变后的值呢？原因是虽然user发生了改变（属性变了），但是user是一个引用类型的值，newValue,oldValue都保存的是一个指针，指向user的引用，当user发生改变的时候指针的指向没有发生变化，所以此时newvalue和oldVaule的值是一样的
+  }, {deep: false})
+</script>
+</body>
+</html>
